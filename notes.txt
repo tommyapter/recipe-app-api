@@ -1,3 +1,5 @@
+
+###setup###
 add ssh to gitlab https://app.getpocket.com/read/1594318835
 add project to gitlab with README.md
 add gitignore http://gitignore.io/
@@ -16,6 +18,14 @@ git commit -a -m "setup docker and django project"
 enable repository in https://travis-ci.org/
 create .travis.yml
 add flake8 to requirements.txt
+commit changes to Github
+check travis-ci.org to see how the build went
+
+
+start a core app (docker-compose run app sh -c "python manage.py startapp core"
+    delete tests.py as we will have a seperate folder for tests, delete views;
+    create a tests folder with __init__.py, and test_models.py inside it
+    insert 'core' in INSTALLED_APPS list
 
 
 
@@ -26,6 +36,41 @@ steps
   sign up with github
   find repository
   check box to enable travis ci on it
-
 The Travis CI configuration file is the file that tells Travis what to do every time we push a change to our project.
 .travis.yml
+
+flake8
+flake8 tests if the code adheres to pep8 styles and other readability issues
+https://stackoverflow.com/questions/47876079/how-to-tell-flake8-to-ignore-comments
+add some exclusions because we're going to exclude some of the automated scripts and tools
+  that are created by Django because Django work to a 100 character limit whereas I like to work my projects to the 79 character (recommended by Python guidelines) limit and so I exclude all the Django stuff so it doesn't fail on the linting when you run that. So we're going to exclude migrations, we're going to exclude pycache, we're going to exclude manage.py and finally settings.py ok let's save that. Next we can commit and push our
+
+tests
+create tests.py
+docker-compose run app sh -c "python manage.py test"
+docker-compose run app sh -c "python manage.py test && flake8"
+
+calc.py
+def add(x, y):
+    """Add two numbers together"""
+    return x+y
+def subtract(x, y):
+    """Subtract x from y and return value"""
+    return y-x
+tests.py
+# the Django unit test framework looks for any files that begin with tests and it basically uses them as the tests when you run the Django run unit tests command
+from django.test import TestCase
+from app.calc import add, subtract
+class CalcTests(TestCase):
+    def test_add_numbers(self):  # all django test functions must begin with test
+        """Test that two numbers are added together"""
+        self.assertEqual(add(3, 8), 11)  # pass inputs and expected result
+    def test_subtract_numbers(self):
+        """Test that values are subtracted and returned"""
+        self.assertEqual(subtract(5, 11), 6)
+
+
+Core App Setup:
+create tests at test_modules.py
+create models at models.py
+change settings.py (in this case we add AUTH_USER_MODEL = 'core.User' )
