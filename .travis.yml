@@ -13,7 +13,7 @@ script:
   - docker-compose run app sh -c "python manage.py test && flake8"
 
 # every time we push a change to github Travis is going to
-# spin up a Python server running Python 3.6. 
+# spin up a Python server running Python 3.6.
 # It's going to make the docker service available it's going to use pip to install docker compose and
 # then finally it's going to run our script and
 # if this exits with a failure then it will fail the build and it will send us a notification.
