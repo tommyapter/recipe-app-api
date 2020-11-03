@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  app:
+    build:
+      context: .
+      # What this says is we're going to have a service called app and the build section of the configuration we're going to set the context to . which is our current directory that we're running Docker compose from.
+    ports:
+      - "8000:8000"
+      # we're going to map our project from port 8000 on our host to port 8000 on our image
+    volumes:
+      - ./app:/app
+      # volume allows us to get the updates that we make to our project Into our Docker image in real time.
+      # So it maps of volume from our local machine here into our Docker container that will be running our application.
+      # This means that whenever you change a file or you change something in the project it'll be automatically updated in the container and you don't need to restart Docker to get the changes into effect.
+      # it maps the app directory which we have in our project to the app directory in our Docker image.
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
+    #command that is used to run our application in our Docker container
+    # add > to continue in next line
+    # sh -c "<command>" run sh(shell) -c(command) command
+    # 0.0.0.0 is the host that we're going to run the server on. # So this will run the Django development server available on all the IP addresses that run on the Docker container. That's what this 0.0.0.0. does.
+    # 8000; And it's going to run on port 8000 which is going to be mapped through the ports configuration to our local machine. So we can run our application and we can connect to it on port 8000 on our local machine.

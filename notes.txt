@@ -1,0 +1,20 @@
+add ssh to gitlab https://app.getpocket.com/read/1594318835
+add project to gitlab with README.md
+add gitignore http://gitignore.io/
+create Dockerfile
+create requirements.txt
+run docker build .
+create docker-compose.yml
+run docker-compose build
+run docker-compose run app sh -c "django-admin.py startproject app ."
+  # app is the one indicated in services
+  # sh -c is optional, but makes it clear we are running a seperate shell script command
+  # the command starts a new project called app and it says start the project in our current location now because this process is going
+git add .
+git commit -a -m "setup docker and django project"
+
+
+Travis CI
+Travis is a really useful continuous integration tool that lets us automate some of the tests and checks on our project every time we push it to Github.
+  For example every time we push a change to github we can make it run our Python unit tests and our Python linting so if there is any issues with our code we can see straight away via an email notification that the build is broken.
+  
