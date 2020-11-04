@@ -15,9 +15,29 @@ services:
       # This means that whenever you change a file or you change something in the project it'll be automatically updated in the container and you don't need to restart Docker to get the changes into effect.
       # it maps the app directory which we have in our project to the app directory in our Docker image.
     command: >
-      sh -c "python manage.py runserver 0.0.0.0:8000"
+      sh -c "python manage.py wait_for_db &&
+       python manage.py migrate &&
+       python manage.py runserver 0.0.0.0:8000"
+    # sh -c "python manage.py runserver 0.0.0.0:8000"
     #command that is used to run our application in our Docker container
     # add > to continue in next line
     # sh -c "<command>" run sh(shell) -c(command) command
     # 0.0.0.0 is the host that we're going to run the server on. # So this will run the Django development server available on all the IP addresses that run on the Docker container. That's what this 0.0.0.0. does.
     # 8000; And it's going to run on port 8000 which is going to be mapped through the ports configuration to our local machine. So we can run our application and we can connect to it on port 8000 on our local machine.
+
+    environment:
+      - DB_HOST=db
+      - DB_NAME=app
+      - DB_USER=postgres
+      - DB_PASS=supersecretpassword
+    depends_on:
+      - db
+      # So we want our app service to depend on the database service that we create here. What this means is two things. 1) The database service will start before the app service and 2) It means the database service will be available via the network when you use the hostname DB. So when you're inside our app service you can connect to the hostname DB and then it will connect to whatever container is running on our DB service.
+
+  db:
+    image: postgres:10-alpine
+    environment:
+      - POSTGRES_DB=app
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=supersecretpassword
+        # You wouldn't use the same password here that you would use on a production system what you would do in production is on your build server or whatever is building your application like Jenkins or Travis you would then add an encrypted environment variable that overrides this when you push your application. So it's never a good idea to commit any secret passwords or put private SSH keys or anything like that to your project because it's an insecure way as if someone else sees the project then they can see the authentication credentials for your application.

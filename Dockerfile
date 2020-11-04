@@ -6,8 +6,13 @@ ENV PYTHONUNBUFFERED 1
   #The reason for this is that it doesn't allow Python to buffer the outputs. It just prints them directly. And this avoids some complications and things like that with the Docker image when you're running your python application.
 
 COPY ./requirements.txt /requirements.txt
+RUN apk add --update --no-cache postgresql-client
+RUN apk add --update --no-cache --virtual .tmp-build-deps \
+      gcc libc-dev linux-headers postgresql-dev
 RUN pip install -r /requirements.txt
-  # What this does is it says copy from the directory adjacent to the Docker file, copy the requirements file that we're going to create here and copy it on the Docker image to /requirements.txt
+# What this does is it says copy from the directory adjacent to the Docker file, copy the requirements file that we're going to create here and copy it on the Docker image to /requirements.txt
+RUN apk del .tmp-build-deps
+# https://www.udemy.com/course/django-python-advanced/learn/lecture/12712601#questions
 
 
 RUN mkdir /app
