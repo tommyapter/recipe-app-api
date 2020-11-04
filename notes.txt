@@ -21,12 +21,39 @@ add flake8 to requirements.txt
 commit changes to Github
 check travis-ci.org to see how the build went
 
-
-start a core app (docker-compose run app sh -c "python manage.py startapp core"
-    delete tests.py as we will have a seperate folder for tests, delete views;
+start a core app
+    run docker-compose run app sh -c "python manage.py startapp core"
+    delete tests.py as we will have a separate folder for tests, delete views;
     create a tests folder with __init__.py, and test_models.py inside it
-    insert 'core' in INSTALLED_APPS list
+    create model tests at test_modules.py
+    create models at models.py
+    change settings.py (insert 'core' in INSTALLED_APPS list; in this case we add AUTH_USER_MODEL = 'core.User' )
+    run docker-compose run app sh -c "python manage.py makemigrations core" #passing core (specifying the app in which we want to run migrations) is not necessarily required
+    create admin tests at test_admin.py
+    create admin classes at admin.py
 
+setup postgres
+    change requirements.txt
+    change docker-compose
+    change Dockerfile
+    change settings.py
+
+create admin user (docker-compose run app sh -c "python manage.py createsuperuser")
+    test123 (password for now)
+
+start a user app
+    docker-compose run --rm app sh -c "python manage.py startapp user"
+        --rm removes the container after it's ran the command. You can include this optionally on any commands that you just want to run once and you don't want the docker container to linger on the system after it's ran. So basically if we add the rm command it should remove the container and just keep the system a little cleaner so it doesn't fill up. It's not a big deal if you don't include this because as soon as you type docker-compose down it removes them all anyways so it's quite easy to clean up but it's nice to do it just to make sure we don't run out of space or anything.
+    remove the migrations folder, admin.py, models.py, tests.py from user app
+        because we're going to keep all of them within the core app, and will create a new subfolder for tests.
+    create a tests folder with __init__.py in it
+    make changes to settings.py
+        in INSTALLED_APPS add 'rest_framework', 'rest_framework.authtoken', users
+    add a test_user_api.py under tests
+    add serializers.py
+    add urls.py
+    add views.py
+    modify main directory urls.py
 
 
 Travis CI
@@ -69,8 +96,7 @@ class CalcTests(TestCase):
         """Test that values are subtracted and returned"""
         self.assertEqual(subtract(5, 11), 6)
 
+So you don't need to test features that are specific to the frameworks or external modules that you're using in your project. you need to rely on the other products testing their own code
 
-Core App Setup:
-create tests at test_modules.py
-create models at models.py
-change settings.py (in this case we add AUTH_USER_MODEL = 'core.User' )
+Mocking testing
+Mocking is when you override or change the behavior of the dependencies of the code that you're testing. We use mocking to avoid any unintended side effects and also to isolate the specific piece of code that we want to test.
