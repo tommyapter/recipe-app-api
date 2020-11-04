@@ -10,7 +10,8 @@ before_script: pip install docker-compose
 
 # docker compose commands for running out tests; flake8 is a linting tool
 script:
-  - docker-compose run app sh -c "python manage.py test && flake8"
+  - docker-compose run app sh -c "python manage.py test"
+# - docker-compose run app sh -c "python manage.py test && flake8"
 
 # every time we push a change to github Travis is going to
 # spin up a Python server running Python 3.6.
