@@ -11,6 +11,7 @@ CREATE_USER_URL = reverse('user:create')
 # Doing it all caps is a naming convention for anything you expect to be a constant
 # reverse should create the user create URL and assign it to this create user URL variable.
 TOKEN_URL = reverse('user:token')  # So this is going to be the URL that we're going to use to make the HTTP POST request to generate our token.
+ME_URL = reverse('user:me')  # update user endpoint the me URL.
 
 
 def create_user(**params):
@@ -93,3 +94,50 @@ class PublicUserApiTests(TestCase):  # Personal preference to separate my API te
         res = self.client.post(TOKEN_URL, {'email': 'one', 'password': ''})
         self.assertNotIn('token', res.data)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_retrieve_user_unauthorized(self):
+        """Test that authentication required for users"""
+        res = self.client.get(ME_URL)  # HTTP get to the ME_URL
+
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+# add our manage user endpoint. The manage user endpoint will allow the authenticated user to update their own profile this includes changing their name, changing their password, and also viewing their user object so they can see what the values are currently set to.
+class PrivateUserApiTests(TestCase):
+    """Test API requests that require authentication"""
+
+    def setUp(self):
+        self.user = create_user(
+            email='test@londonappdev.com',
+            password='testpass',
+            name='fname',
+        )
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.user)  # force_authenticate method to authenticate any requests that the client makes with our sample user.  Force_authenticate is a helper function that basically just makes it really easy to simulate or making authenticated requests.
+
+    def test_retrieve_profile_success(self):
+        """Test retrieving profile for logged in user"""
+        res = self.client.get(ME_URL)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data, {
+            'name': self.user.name,
+            'email': self.user.email,
+        })
+
+    def test_post_me_not_allowed(self):
+        """Test that POST is not allowed on the me URL"""
+        res = self.client.post(ME_URL, {})
+
+        self.assertEqual(res.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def test_update_user_profile(self):
+        """Test updating the user profile for authenticated user"""
+        payload = {'name': 'new name', 'password': 'newpassword123'}
+
+        res = self.client.patch(ME_URL, payload)
+
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.name, payload['name'])
+        self.assertTrue(self.user.check_password(payload['password']))
+        self.assertEqual(res.status_code, status.HTTP_200_OK)

@@ -8,6 +8,7 @@ app_name = 'user'  # the app name is set to help identify which app we're creati
 urlpatterns = [
     path('create/', views.CreateUserView.as_view(), name='create'),
     path('token/', views.CreateTokenView.as_view(), name='token'),
+    path('me/', views.ManageUserView.as_view(), name='me'),
 ]
 # name is so that we can identify it when using the reverse lookup function the name is going to be create
 # put a comma there at the end because it's good to practice

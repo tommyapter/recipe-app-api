@@ -16,6 +16,17 @@ class UserSerializer(serializers.ModelSerializer):  # Django rest framework has 
         return get_user_model().objects.create_user(**validated_data)  # we're going to use this star syntax here to unwind this validated data into the parameters of the create user function.
 # Django rest framework: when we're ready to create the user it will call the create function and it will pass in the validated data the validated data will contain all of the data that was passed into our serializer which would be the JSON data that was made in the HTTP POST and it passes it as the argument here and then we can then use that to create our user.
 
+    def update(self, instance, validated_data):  # The purpose of this is we want to make sure the password is set using the set password function instead of just setting it to whichever value is provided.
+        """Update a user, setting the password correctly and return it"""
+        password = validated_data.pop('password', None)
+        user = super().update(instance, validated_data)
+
+        if password:
+            user.set_password(password)
+            user.save()
+
+        return user
+
 
 # Token endpoint.
 # This is going to be an endpoint that you can make a HTTP POST request and you can generate a temporary auth token that you can then use to authenticate future requests with the API.
