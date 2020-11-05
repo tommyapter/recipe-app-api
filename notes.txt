@@ -100,3 +100,8 @@ So you don't need to test features that are specific to the frameworks or extern
 
 Mocking testing
 Mocking is when you override or change the behavior of the dependencies of the code that you're testing. We use mocking to avoid any unintended side effects and also to isolate the specific piece of code that we want to test.
+
+
+Rest API
+put updates and replaces the entire object. So if we were to say remove the name then it would post the email without the name and then our API will probably fail with a validation error.
+patch only updates the values that we provide so if we just wanted to update the name you can submit a patch without the email and it should just change the name in the API if you want to update the username and the name then you can do them both in a patch or you can do them in a put. But with the put you're going to have to provide all the fields and that includes the password field.

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'core',
     'user',
+    'recipe',
 ]
 
 MIDDLEWARE = [
@@ -127,5 +128,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'  # we're setting here is that the static files will be served from the forward slash static part of our web server so if you go to our server let's just say our server is I'm going to add a comment here to describe this so let's say our server is 127.0.0.1 on port 8000 so anything on static will map to our static directories and anything in slash media will map to our media files that way when we upload media files we have an accessible URL so that we can access them through our web server
 
+MEDIA_ROOT = '/vol/web/media'  # tells Django where to store all the media files
+STATIC_ROOT = '/vol/web/static'  # static files will be dumped when the project is built so Django actually comes with a command called collect static files and what that does is it collects all the static files from any dependency that we have and it combines them all and stores them in the static root so we can run this one starting our project and it will pull all of the CSS and JavaScript that are required for the Django rest framework browsable api and for the Django admin and it will store them in this static directory that means when we're serving our project in production we can access these static files and we can view the Django admin just as we can view it in our local machine
 AUTH_USER_MODEL = 'core.User' #core is the name of the app, and User is the name of the model in our app that we want to assign as the custom user model.
